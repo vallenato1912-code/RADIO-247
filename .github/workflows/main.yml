@@ -10,4 +10,6 @@ jobs:
     steps:
       - name: Instalar ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
-      - name: Transmitir
+      - name: Transmitir RADIO CARDINAL 730 AM
+        run: |
+          ffmpeg -re -f lavfi -i color=c=0xB50000:s=1280x720:r=15 -i https://ny1.radio.primcast.com/8342/stream -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='RADIO CARDINAL 730 AM':fontcolor=white:fontsize=70:x=(w-text_w)/2:y=320:box=1:boxcolor=black@0.6:boxborderw=15,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='EN VIVO':fontcolor=red:fontsize=55:x=(w-text_w)/2:y=220:box=1:boxcolor=white@0.9:boxborderw=10:enable='lt(mod(t\,1)\,0.6)'" -c:v libx264 -preset veryfast -b:v 1200k -r 15 -g 30 -pix_fmt yuv420p -c:a aac -b:a 128k -ar 44100 -f flv rtmp://a.rtmp.youtube.com/live2/ya8v-vbz8-xy0f-cccr-fs2j
