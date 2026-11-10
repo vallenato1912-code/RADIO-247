@@ -1,5 +1,5 @@
 FROM alpine:latest
-RUN apk add --no-cache ffmpeg bash
+RUN apk add --no-cache ffmpeg bash ttf-dejavu fontconfig
 WORKDIR /app
 COPY vivo.sh /app/vivo.sh
 RUN chmod +x /app/vivo.sh
