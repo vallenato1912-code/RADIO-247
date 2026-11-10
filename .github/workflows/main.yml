@@ -6,8 +6,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     steps:
-      - name: Instalar ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Transmitir simple a YouTube
-        run: |
-          ffmpeg -re -f lavfi -i color=c=red:s=1280x720:r=15 -i https://ny1.radio.primcast.com/8342/stream -c:v libx264 -preset veryfast -b:v 1000k -c:a aac -b:a 128k -f flv rtmp://a.rtmp.youtube.com/live2/ya8v-vbz8-xy0f-cccr-fs2j
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: ffmpeg -re -stream_loop -1 -f lavfi -i color=c=0xB50000:s=1280x720:r=24 -i https://ny1.radio.primcast.com/8342/stream -c:v libx264 -preset veryfast -b:v 1500k -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p -g 48 -c:a aac -b:a 128k -ar 44100 -shortest -f flv rtmp://a.rtmp.youtube.com/live2/ya8v-vbz8-xy0f-cccr-fs2j
