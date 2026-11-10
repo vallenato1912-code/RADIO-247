@@ -1,15 +1,16 @@
- #!/bin/bash
-echo "RADIO CARDINAL 730 AM - ESTABLE 24/7"
+#!/bin/bash
+echo "INICIANDO RADIO 24/7 ESTABLE"
 mkdir -p /tmp/www
-echo "Radio Cardinal 730 AM - OK - 24/7" > /tmp/www/index.html
+echo "OK RADIO CARDINAL" > /tmp/www/index.html
 PORT=${PORT:-10000}
-busybox httpd -p $PORT -h /tmp/www &
-echo "Web en puerto $PORT"
+busybox httpd -f -p $PORT -h /tmp/www &
 
-ffmpeg -y -f lavfi -i color=c=0xB50000:s=1280x720:r=15 -frames:v 1 -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='• EN VIVO':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=90, drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='RADIO EN VIVO':fontcolor=white:fontsize=115:x=(w-text_w)/2:y=280, drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ABC CARDINAL 730 AM':fontcolor=white:fontsize=52:x=(w-text_w)/2:y=450, drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='24/7 - TRANSMITIENDO EN VIVO':fontcolor=white:fontsize=28:x=(w-text_w)/2:y=600" /tmp/fondo.jpg
+ffmpeg -y -f lavfi -i color=c=0xB50000:s=1280x720:r=15 -frames:v 1 -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='ABC CARDINAL 730 AM':fontcolor=white:fontsize=60:x=(w-text_w)/2:y=320, drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='EN VIVO 24/7':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=400" /tmp/fondo.jpg
 
 while true; do
-ffmpeg -thread_queue_size 1024 -fflags +genpts -probesize 32 -analyzeduration 0 -re -loop 1 -framerate 15 -i /tmp/fondo.jpg -thread_queue_size 1024 -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 5 -i https://ny1.radio.primcast.com/8342/stream -c:v libx264 -preset ultrafast -tune stillimage -b:v 1200k -r 15 -g 30 -pix_fmt yuv420p -c:a aac -b:a 96k -ar 44100 -ac 2 -af aresample=async=1:min_hard_comp=0.100000:first_pts=0 -max_interleave_delta 100M -bufsize 4000k -f flv rtmp://a.rtmp.youtube.com/live2/831u-sm62-e9mb-2pwh-4ksw
-echo "RECONECTANDO EN 5 SEG..."
-sleep 5
+echo "TRANSMITIENDO..."
+ffmpeg -re -loop 1 -framerate 15 -i /tmp/fondo.jpg -reconnect 1 -reconnect_at_eof 1 -reconnect_streamed 1 -reconnect_delay_max 10 -i https://ny1.radio.primcast.com/8342/stream -c:v libx264 -preset veryfast -b:v 1000k -maxrate 1000k -bufsize 2000k -r 15 -g 30 -keyint_min 30 -pix_fmt yuv420p -c:a aac -b:a 128k -ar 44100 -f flv rtmp://a.rtmp.youtube.com/live2/831u-sm62-e9mb-2pwh-4ksw || true
+echo "SE CORTÓ, REINICIANDO EN 3 SEG..."
+sleep 3
 done
+
