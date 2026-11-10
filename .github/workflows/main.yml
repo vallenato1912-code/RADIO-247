@@ -1,0 +1,19 @@
+name: RADIO-247-EN-VIVO
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */5 * * *'
+jobs:
+  radio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Instalar ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Transmitir 24/7 a YouTube
+        run: |
+          ffmpeg -y -f lavfi -i color=c=0xB50000:s=1280x720 -frames:v 1 /tmp/fondo.jpg
+          while true; do
+          ffmpeg -re -loop 1 -framerate 15 -i /tmp/fondo.jpg -i https://ny1.radio.primcast.com/8342/stream -c:v libx264 -preset ultrafast -b:v 800k -r 15 -g 30 -pix_fmt yuv420p -c:a aac -b:a 96k -f flv rtmp://a.rtmp.youtube.com/live2/831u-sm62-e9mb-2pwh-4ksw || true
+          sleep 5
+          done
